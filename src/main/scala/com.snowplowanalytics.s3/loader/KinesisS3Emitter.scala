@@ -65,7 +65,7 @@ class KinesisS3Emitter(
 
     val prefix = s3Config.partitioningFormat match {
       case "flat" => s"${dateFormat.format(date)}-"
-      case "hive" => s"Year=${yearFormat.format(date)}/Month=${monthFormat.format(date)}/Day=${dayFormat.format(date)}/"
+      case "hive" => s"year=${yearFormat.format(date)}/month=${monthFormat.format(date)}/day=${dayFormat.format(date)}/"
       case s => throw new IllegalArgumentException(s"Unsupported partitioning format '${s}'. Check s3.partitioningFormat key in configuration file.")
     }
 

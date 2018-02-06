@@ -34,7 +34,7 @@ class KinesisS3EmitterSpec extends Specification with PrivateMethodTester {
 
       val getBaseFilename = PrivateMethod[String]('getBaseFilename)
       val baseFilename = kinesisS3Emitter.invokePrivate(getBaseFilename("0", "1"))
-      baseFilename must_== "Year=2018/Month=02/Day=05/0-1"
+      baseFilename must_== "year=2018/month=02/day=05/0-1"
     }
   }
 
