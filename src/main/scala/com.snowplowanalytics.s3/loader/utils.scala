@@ -20,10 +20,27 @@ package com.snowplowanalytics.s3.loader
 
 import scala.util.{Failure, Success, Try}
 
+import java.text.SimpleDateFormat
+import java.util.Calendar
+
+import com.snowplowanalytics.s3.loader.model.S3Config
+
 object utils {
     // to rm once 2.12 as well as the right projections
     def fold[A, B](t: Try[A])(ft: Throwable => B, fa: A => B): B = t match {
       case Success(a) => fa(a)
       case Failure(t) => ft(t)
     }
+
+    def createS3Prefix(calendar: Calendar, s3Config: S3Config): String = {
+	    val date = calendar.getTime()
+	    val dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    val (yearFormat, monthFormat, dayFormat) = ( new SimpleDateFormat("yyyy"), new SimpleDateFormat("MM"), new SimpleDateFormat("dd"))
+
+	    s3Config.partitioningFormat match {
+	      case "flat" => s"${dateFormat.format(date)}-"
+	      case "hive" => s"year=${yearFormat.format(date)}/month=${monthFormat.format(date)}/day=${dayFormat.format(date)}/"
+	      case s => throw new IllegalArgumentException(s"Unsupported partitioning format '${s}'. Check s3.partitioningFormat key in configuration file.")
+	    }
+	}
 }

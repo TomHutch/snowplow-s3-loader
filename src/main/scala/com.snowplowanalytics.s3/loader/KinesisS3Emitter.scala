@@ -17,7 +17,6 @@ import scala.collection.JavaConverters._
 
 // Java libs
 import java.util.Calendar
-import java.text.SimpleDateFormat
 
 //AWS libs
 import com.amazonaws.auth.AWSCredentialsProvider
@@ -58,19 +57,8 @@ class KinesisS3Emitter(
    * Determines the filename in S3, which is the corresponding
    * Kinesis sequence range of records in the file.
    */
-  protected def getBaseFilename(firstSeq: String, lastSeq: String): String = {
-    val date = calendar.getTime()
-    val dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    val (yearFormat, monthFormat, dayFormat) = ( new SimpleDateFormat("yyyy"), new SimpleDateFormat("MM"), new SimpleDateFormat("dd"))
-
-    val prefix = s3Config.partitioningFormat match {
-      case "flat" => s"${dateFormat.format(date)}-"
-      case "hive" => s"year=${yearFormat.format(date)}/month=${monthFormat.format(date)}/day=${dayFormat.format(date)}/"
-      case s => throw new IllegalArgumentException(s"Unsupported partitioning format '${s}'. Check s3.partitioningFormat key in configuration file.")
-    }
-
-    return s"${prefix}${firstSeq}-${lastSeq}"
-  }
+  protected def getBaseFilename(firstSeq: String, lastSeq: String): String =
+    s"${utils.createS3Prefix(calendar, s3Config)}${firstSeq}-${lastSeq}"
 
   /**
    * Reads items from a buffer and saves them to s3.

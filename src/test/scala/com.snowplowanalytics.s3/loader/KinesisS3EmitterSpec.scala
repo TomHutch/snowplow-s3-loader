@@ -1,7 +1,5 @@
 package com.snowplowanalytics.s3.loader
 
-import java.util.Calendar
-
 import com.snowplowanalytics.s3.loader.model.S3Config
 
 // Specs2
@@ -18,8 +16,8 @@ class KinesisS3EmitterSpec extends Specification with PrivateMethodTester {
 
       kinesisS3Emitter.calendar.set(2018, 1, 5) // Month is 0 based
 
-      val getBaseFilename = PrivateMethod[String]('getBaseFilename)
-      val baseFilename = kinesisS3Emitter.invokePrivate(getBaseFilename("0", "1"))
+      val getBaseFilenameKinesis = PrivateMethod[String]('getBaseFilename)
+      val baseFilename = kinesisS3Emitter.invokePrivate(getBaseFilenameKinesis("0", "1"))
       baseFilename must_== "2018-02-05-0-1"
     }
   }
@@ -32,8 +30,8 @@ class KinesisS3EmitterSpec extends Specification with PrivateMethodTester {
 
       kinesisS3Emitter.calendar.set(2018, 1, 5) // Month is 0 based
 
-      val getBaseFilename = PrivateMethod[String]('getBaseFilename)
-      val baseFilename = kinesisS3Emitter.invokePrivate(getBaseFilename("0", "1"))
+      val getBaseFilenameKinesis = PrivateMethod[String]('getBaseFilename)
+      val baseFilename = kinesisS3Emitter.invokePrivate(getBaseFilenameKinesis("0", "1"))
       baseFilename must_== "year=2018/month=02/day=05/0-1"
     }
   }
@@ -46,9 +44,9 @@ class KinesisS3EmitterSpec extends Specification with PrivateMethodTester {
 
       kinesisS3Emitter.calendar.set(2018, 1, 5) // Month is 0 based
 
-      val getBaseFilename = PrivateMethod[String]('getBaseFilename)
+      val getBaseFilenameKinesis = PrivateMethod[String]('getBaseFilename)
 
-      kinesisS3Emitter.invokePrivate(getBaseFilename("0", "1")) must throwA(new IllegalArgumentException(
+      kinesisS3Emitter.invokePrivate(getBaseFilenameKinesis("0", "1")) must throwA(new IllegalArgumentException(
           "Unsupported partitioning format 'foo'. Check s3.partitioningFormat key in configuration file."
         ))
     }

@@ -45,6 +45,9 @@ import com.amazonaws.auth.AWSCredentialsProvider
 import org.joda.time.{DateTime, DateTimeZone}
 import org.joda.time.format.DateTimeFormat
 
+// Java libs
+import java.util.Calendar
+
 // Logging
 import org.slf4j.LoggerFactory
 
@@ -77,15 +80,14 @@ class NsqSourceExecutor(
   val msgBuffer = new ListBuffer[EmitterInput]()
 
   val s3Emitter = new S3Emitter(config.s3, provider, badSink, maxConnectionTime, tracker)
+  val calendar = Calendar.getInstance()
   private val TimeFormat = DateTimeFormat.forPattern("HH:mm:ss.SSS").withZone(DateTimeZone.UTC)
-  private val DateFormat = DateTimeFormat.forPattern("yyyy-MM-dd").withZone(DateTimeZone.UTC)
 
   private def getBaseFilename(startTime: Long, endTime: Long): String = {
-    val currentTimeObject = new DateTime(System.currentTimeMillis())
     val startTimeObject = new DateTime(startTime)
     val endTimeObject = new DateTime(endTime)
 
-    DateFormat.print(currentTimeObject) + "-" +
+    utils.createS3Prefix(calendar, config.s3) +
       TimeFormat.print(startTimeObject) + "-" +
       TimeFormat.print(endTimeObject)   + "-" +
       math.abs(util.Random.nextInt)
